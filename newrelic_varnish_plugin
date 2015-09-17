@@ -119,6 +119,9 @@ module VarnishAgent
       'Number of objects' => {
         'metrics' => %w(n_object n_objcore n_objhead)
       },
+      'Nuked objects' => {
+        'metrics' => %w(n_lru_nuked)
+      },
       'Transfer rates' => {
         'metrics' => %w(s_bodybytes s_hdrbytes)
       },
