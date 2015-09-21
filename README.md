@@ -15,4 +15,4 @@ varnishstat back into New Relic.
 4. Edit the configuration file and fill in your New Relic license key (and any other desired options)
 5. Execute plugin agent (use -h for usage hints)
 
-Data should now get reported to you'r New Relic account
+Data should now get reported to your New Relic account
