@@ -1,5 +1,6 @@
 #! /usr/bin/env ruby
 
+# Extended by Ilon Sjögren
 #
 # Copyright 2012 Varnish Software AS
 #
@@ -107,31 +108,57 @@ module VarnishAgent
 
   def VarnishAgent.groups()
     return {
-      'Request rates' => {
-        'metrics' => %w(cache_hit cache_hitpass cache_miss backend_conn backend_unhealthy client_req client_conn)
-      },
-      'Hit rates' => {
-        'metrics' => %w(client_req cache_hit cache_miss cache_hitpass)
-      },
       'Backend Traffic' => {
-        'metrics' => %w(backend_conn backend_unhealthy backend_busy backend_fail backend_reuse backend_recycle backend_unused backend_req)
+        'metrics' => %w(backend_busy backend_conn backend_fail backend_recycle backend_req backend_retry backend_reuse backend_toolate backend_unhealthy)
       },
-      'Number of objects' => {
-        'metrics' => %w(n_object n_objcore n_objhead)
+      'Cache Utilization' => {
+        'metrics' => %w(client_req cache_hit cache_hitpass cache_miss)
       },
-      'Transfer rates' => {
-        'metrics' => %w(s_bodybytes s_hdrbytes)
+      'Compression' => {
+        'metrics' => %w(n_gunzip n_gzip)
       },
-      'Thread status' => {
-        'metrics' => %w(n_wrk n_wrk_create n_wrk_failed n_wrk_max n_wrk_overflow n_wrk_drop)
+      'Connections' => {
+        'metrics' => %w(accept_fail client_conn client_drop client_drop_late client_req)
       },
-      'Memory usage' => {
-        'metrics' => %w(sm_balloc sma_nbytes sms_nbytes),
-        'regex_metrics' => [ /^(SM[AF]\.[^.]+)\.g_(bytes|space)/ ]
+      'DNS Director' => {
+        'metrics' => %w(dir_dns_cache_full dir_dns_failed dir_dns_hit dir_dns_lookups)
       },
-      'Misbehaviour' => {
-        'metrics' => %w(client_drop backend_unhealthy fetch_failed backend_busy n_wrk_failed n_wrk_max n_wrk_drop n_wrk_lqueue losthdr n_objoverflow esi_errors esi_warnings client_drop_late accept_fail),
-        'regex_metrics' => [/^(SM[AF]\.[^.]+)\.c_fail/ ]
+      'Hit Rates' => {
+        # Provide calculated values
+        'metrics' => %w(cache_missrate cache_hitrate cache_passrate)
+      },
+      'Network' => {
+        'metrics' => %w(s_bodybytes s_fetch s_hdrbytes s_pass s_pipe s_req s_sess)
+      },
+      'Objects' => {
+        'metrics' => %w(n_expired n_lru_nuked n_object n_objectcore n_objecthead n_objsendfile n_objwrite)
+      },
+      'Response Codes' => {
+        'metrics' => %w(fetch_1xx fetch_204 fetch_304)
+      },
+      'Response Details' => {
+        'metrics' => %w(fetch_chunked fetch_close fetch_eof fetch_head fetch_length fetch_oldhttp fetch_zero)
+      },
+      'Response Misbehave' => {
+        'metrics' => %w(fetch_bad fetch_failed)
+      },
+      'Sessions' => {
+        'metrics' => %w(sess_closed sess_linger sess_pipe_overflow sess_pipeline sess_readahead n_sess n_sess_mem)
+      },
+      'Storage' => {
+        'metrics' => %w(sms_balloc sms_bfree sms_nbytes sms_nobj sms_nreq),
+        'regex_metrics' => [ /^(SM[AF]\.[^.]+)\.[cg]_(\w+)/ ]
+      },
+      'Workers' => {
+        'metrics' => %w(n_wrk n_wrk_create n_wrk_drop n_wrk_failed n_wrk_lqueue n_wrk_max n_wrk_queued)
+      },
+      # The following metrics are collected for diagnostics and debugging
+      # They could safely be removed to save down on data transfer / storage
+      'Diagnostic' => {
+        'metrics' => %w(esi_errors esi_warnings losthdr n_backend n_ban n_ban_add n_ban_dups n_ban_gone n_ban_obj_test n_ban_re_test n_ban_retire n_lru_moved n_objoverflow n_vampireobject n_vcl n_vcl_avail n_vcl_discard sess_herd shm_cont shm_cycles shm_flushes shm_records shm_writes)
+      },
+      'Debug' => {
+        'metrics' => %w(hcb_insert hcb_lock hcb_nolock n_waitinglist)
       },
     }
   end
@@ -155,8 +182,8 @@ module VarnishAgent
   end
 
   class Agent < NewRelic::Plugin::Agent::Base
-    agent_guid "com.varnish-software.newrelic-stat"
-    agent_version '0.0.5'
+    agent_guid "in.binarypa.newrelic-varnish-stat"
+    agent_version '0.0.1'
     agent_human_labels("Varnish") { "#{@name||"varnish"}[#{@vname||"default"}]"}
     agent_config_options :name, :vname
 
@@ -170,10 +197,12 @@ module VarnishAgent
         "requests"
         when /^cache_(hit|miss)/
         "requests"
+        when /^n_(gunzip|gzip)/
+        "operations"
         when /^backend_/
         "connections"
         when /^fetch_/
-        "fetch"
+        "requests"
         when /^n_(obj|expired|lru)/
         "objects"
         when /^n_wrk/
@@ -187,6 +216,8 @@ module VarnishAgent
         when /^s_(req|pipe|pass|fetch)/
         "requests"
         when /(bytes|balloc)$/
+        "bytes"
+        when /(bfree|nbytes)$/
         "bytes"
         when /g_space$/
         "bytes"
@@ -203,7 +234,8 @@ module VarnishAgent
         when /c_fail$/
         "allocations"
         else
-        raise "Unknown unit: #{name}"
+        "unknown"
+        #raise "Unknown unit: #{name}"
         end
     end
 
