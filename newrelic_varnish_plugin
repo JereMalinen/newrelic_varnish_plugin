@@ -196,10 +196,12 @@ module VarnishAgent
         "requests"
         when /^cache_(hit|miss)/
         "requests"
+        when /^n_(gunzip|gzip)/
+        "operations"
         when /^backend_/
         "connections"
         when /^fetch_/
-        "fetch"
+        "requests"
         when /^n_(obj|expired|lru)/
         "objects"
         when /^n_wrk/
