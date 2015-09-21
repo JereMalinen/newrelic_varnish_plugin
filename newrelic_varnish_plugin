@@ -132,8 +132,14 @@ module VarnishAgent
       'Objects' => {
         'metrics' => %w(n_expired n_lru_nuked n_object n_objectcore n_objecthead n_objsendfile n_objwrite)
       },
-      'Responses' => {
-        'metrics' => %w(fetch_1xx fetch_204 fetch_304 fetch_bad fetch_chunked fetch_close fetch_eof fetch_failed fetch_head fetch_length fetch_oldhttp fetch_zero)
+      'Response Codes' => {
+        'metrics' => %w(fetch_1xx fetch_204 fetch_304)
+      },
+      'Response Details' => {
+        'metrics' => %w(fetch_chunked fetch_close fetch_eof fetch_head fetch_length fetch_oldhttp fetch_zero)
+      },
+      'Response Misbehave' => {
+        'metrics' => %w(fetch_bad fetch_failed)
       },
       'Sessions' => {
         'metrics' => %w(sess_closed sess_linger sess_pipe_overflow sess_pipeline sess_readahead n_sess n_sess_mem)
@@ -207,6 +213,8 @@ module VarnishAgent
         when /^s_(req|pipe|pass|fetch)/
         "requests"
         when /(bytes|balloc)$/
+        "bytes"
+        when /(bfree|nbytes)$/
         "bytes"
         when /g_space$/
         "bytes"
