@@ -5,6 +5,8 @@ This is a fork of [the original](https://github.com/varnish/newrelic_varnish_plu
 This runs on the Varnish server and reports the values from
 varnishstat back into New Relic.
 
+Tested with Varnish version 3.
+
 ## Instructions for running the Varnish extension agent
 1. Download (or clone) and uncompress the [latest release](https://github.com/ilons/newrelic_varnish_plugin/releases/latest), currently v0.2:
 `RELEASE="v0.2" && wget "https://github.com/ilons/newrelic_varnish_plugin/archive/${RELEASE}.tar.gz" -O - | tar -zxvz && cd "newrelic_varnish_plugin-${RELEASE}"`
