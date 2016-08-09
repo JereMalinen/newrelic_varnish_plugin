@@ -28,4 +28,3 @@ To build install the plugin in an isolated environment:
 1. Install docker
 2. `docker build .`
 3. `docker run --rm -it <build image id>`
->>>>>>> Stashed changes
