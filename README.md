@@ -20,3 +20,12 @@ Tested with Varnish version 3.
 6. Execute plugin agent (use -h for usage hints)
 `./newrelic_varnish_plugin -c /etc/newrelic/newrelic_varnish.yml -p /var/run/newrelic_varnish.pid` && `service newrelic-varnish start`
 7. Go back to the Extensions list and after a brief period you will see an entry for your extension
+
+Data should now get reported to your New Relic account
+
+## Testing / Development
+To build install the plugin in an isolated environment:
+1. Install docker
+2. `docker build .`
+3. `docker run --rm -it <build image id>`
+>>>>>>> Stashed changes
