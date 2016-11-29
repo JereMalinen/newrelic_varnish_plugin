@@ -13,7 +13,7 @@ Tested with Varnish version 3.
 2. Install required Ruby gems (json, newrelic_plugin, bundler):
 `bundle install`
 3. Copy the config `config/template_newrelic_plugin.yml` to the appropriate place, for example `/etc/newrelic/newrelic_varnish_plugin.yml`
-`cp config/template_newrelic_plugin.yml /etc/newrelic/newrelic_vanish_plugin.yml`
+`cp config/template_newrelic_plugin.yml /etc/newrelic/newrelic_varnish_plugin.yml`
 4. Edit the configuration file and fill in your New Relic license key (and any other desired options)
 5. Optionally, Install daemon:
 `cp config/newrelic_varnish_plugin_daemon.sh /etc/init.d/newrelic-varnish.sh && chmod +x /etc/init.d/newrelic-varnish`
