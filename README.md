@@ -15,11 +15,12 @@ Tested with Varnish version 3.
 3. Copy the config `config/template_newrelic_plugin.yml` to the appropriate place, for example `/etc/newrelic/newrelic_varnish_plugin.yml`
 `cp config/template_newrelic_plugin.yml /etc/newrelic/newrelic_varnish_plugin.yml`
 4. Edit the configuration file and fill in your New Relic license key (and any other desired options)
-5. Optionally, Install daemon:
-`cp config/newrelic_varnish_plugin_daemon.sh /etc/init.d/newrelic-varnish.sh && chmod +x /etc/init.d/newrelic-varnish`
-6. Execute plugin agent (use -h for usage hints)
-`./newrelic_varnish_plugin -c /etc/newrelic/newrelic_varnish.yml -p /var/run/newrelic_varnish.pid` && `service newrelic-varnish start`
-7. Go back to the Extensions list and after a brief period you will see an entry for your extension
+5. Copy the executable `newrelic_varnish_plugin` to an appropriate place, e.g. `/usr/local/bin/newrelic_varnish_plugin`
+6. Optionally, Install daemon:
+`cp config/newrelic_varnish_plugin_daemon.sh /etc/init.d/newrelic-varnish.sh && chmod +x /etc/init.d/newrelic-varnish`. If so, update the values of DAEMON and CONFIG to the locations you used in step 5 and step 3 respectively.
+7. Execute plugin agent (use -h for usage hints)
+`/usr/local/bin/newrelic_varnish_plugin -c /etc/newrelic/newrelic_varnish.yml -p /var/run/newrelic_varnish.pid` && `service newrelic-varnish start`
+8. Go back to the Extensions list and after a brief period you will see an entry for your extension
 
 Data should now get reported to your New Relic account
 
