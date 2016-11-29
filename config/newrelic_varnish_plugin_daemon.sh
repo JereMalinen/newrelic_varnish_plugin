@@ -16,7 +16,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Newrelic Varnish plugin daemon"
 NAME=newrelic-varnish
-DAEMON=/usr/local/bin/newrelic-varnish-plugin
+DAEMON=/usr/local/bin/newrelic_varnish_plugin
 CONFIG=/etc/newrelic/newrelic_varnish_plugin.yml
 PIDFILE=/var/run/newrelic_varnish_plugin.pid
 SCRIPTNAME=/etc/init.d/$NAME
