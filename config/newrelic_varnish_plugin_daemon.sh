@@ -19,6 +19,7 @@ NAME=newrelic-varnish
 DAEMON=/usr/local/bin/newrelic-varnish-plugin
 CONFIG=/etc/newrelic/newrelic_varnish_plugin.yml
 PIDFILE=/var/run/newrelic_varnish_plugin.pid
+PID=`cat $PIDFILE`
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
@@ -53,6 +54,11 @@ do_stop()
 
 case "$1" in
   start)
+        # Check the process isn't already started
+        if ps --pid $PID >/dev/null 2>&1; then
+                echo "$NAME is already running at $PID"
+                exit 4
+        fi
         [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
         do_start
         case "$?" in
@@ -69,7 +75,7 @@ case "$1" in
         esac
         ;;
   status)
-        status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+        status_of_proc -p $PIDFILE "$DAEMON" "$NAME" && exit 0 || exit $?
         ;;
   restart|force-reload)
         log_daemon_msg "Restarting $DESC" "$NAME"
